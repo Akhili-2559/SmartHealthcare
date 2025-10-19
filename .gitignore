@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+*.pyc
+database/patients.db
+models/diabetes_model.pkl
+.DS_Store

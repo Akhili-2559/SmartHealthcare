@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Prediction Result</h2>
+
+{% if message %}
+<p style="text-align:center; font-size:18px; color:green;">{{ message }}</p>
+{% else %}
+<div style="width:200px; margin:0 auto; padding:20px; border-radius:10px;
+    text-align:center; color:white; 
+    background-color: {% if prediction==1 %} #ff4d4d {% else %} #28a745 {% endif %};
+    animation: fadeIn 1.5s ease;">
+    <h3>{% if prediction==1 %}High Risk{% else %}Low Risk{% endif %}</h3>
+</div>
+{% endif %}
+
+<a href="/add_patient" style="display:block; text-align:center; margin-top:20px;">Add Another Patient</a>
+<a href="/patients" style="display:block; text-align:center; margin-top:10px;">View All Patients</a>
+{% endblock %}

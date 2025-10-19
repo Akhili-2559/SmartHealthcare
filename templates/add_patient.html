@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Patient Data</h2>
+<form method="POST">
+    Name: <input type="text" name="name" placeholder="Enter patient name" required><br>
+    Age: <input type="number" name="age" placeholder="e.g., 45" required><br>
+    Glucose: <input type="number" name="glucose" placeholder="e.g., 130" required><br>
+    Blood Pressure: <input type="number" name="blood_pressure" placeholder="e.g., 85" required><br>
+    <input type="submit" value="Submit">
+</form>
+
+
+<p style="text-align:center; font-size:12px;">These values will be analyzed by the AI model to predict diabetes risk.</p>
+{% endblock %}
