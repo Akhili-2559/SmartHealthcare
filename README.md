@@ -11,5 +11,5 @@ A web-based healthcare system that stores patient data, predicts diabetes risk u
 - Modern web interface with CSS animations
 - Left-side vertical navbar for easy navigation
 
-## Folder Structure
+
 
