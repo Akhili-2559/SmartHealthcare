@@ -1,22 +1,75 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>All Patients</h2>
-<table>
-<tr>
-    <th>ID</th><th>Name</th><th>Age</th><th>Glucose</th><th>Blood Pressure</th><th>Actions</th>
-</tr>
-{% for patient in patients %}
-<tr>
-    <td>{{ patient[0] }}</td>
-    <td>{{ patient[1] }}</td>
-    <td>{{ patient[2] }}</td>
-    <td>{{ patient[3] }}</td>
-    <td>{{ patient[4] }}</td>
-    <td>
-        <a href="/edit_patient/{{ patient[0] }}" style="color:green;">Edit</a> |
-        <a href="/delete_patient/{{ patient[0] }}" style="color:red;" onclick="return confirm('Are you sure?')">Delete</a>
-    </td>
-</tr>
-{% endfor %}
-</table>
+
+<div class="card">
+
+    <h1>All Patients</h1>
+    <div class="stats">
+
+<div class="stat-card">
+
+<h2>{{ patients|length }}</h2>
+
+<p>Total Patients</p>
+
+</div>
+
+</div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Glucose</th>
+                <th>Blood Pressure</th>
+                <th>Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for patient in patients %}
+
+            <tr>
+
+                <td>{{ patient[0] }}</td>
+
+                <td>{{ patient[1] }}</td>
+
+                <td>{{ patient[2] }}</td>
+
+                <td>{{ patient[3] }}</td>
+
+                <td>{{ patient[4] }}</td>
+
+                <td>
+
+                    <a href="/edit_patient/{{ patient[0] }}" class="edit-btn">
+                        Edit
+                    </a>
+
+                    <a href="/delete_patient/{{ patient[0] }}"
+                       class="delete-btn"
+                       onclick="return confirm('Are you sure you want to delete this patient?')">
+                        Delete
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
 {% endblock %}

@@ -1,5 +1,47 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h1>Welcome to Smart Healthcare System</h1>
-<p style="text-align:center;">Use the left menu to add patients or view records.</p>
+
+<div class="card">
+
+    <h1>🏥 Smart Healthcare System</h1>
+
+    <h3 class="subtitle">
+        AI-Based Diabetes Prediction & Patient Management System
+    </h3>
+
+    <p class="intro">
+        Welcome to Smart Healthcare System.
+        This application helps healthcare professionals manage patient
+        records and predict diabetes risk using Machine Learning.
+    </p>
+
+    <div class="features">
+
+        <div class="feature">
+            ➕ Add Patient Records
+        </div>
+
+        <div class="feature">
+            👥 View Patient Records
+        </div>
+
+        <div class="feature">
+            🤖 Diabetes Prediction
+        </div>
+
+        
+
+    </div>
+
+    <center>
+
+        <a href="/add_patient" class="btn">
+            Get Started
+        </a>
+
+    </center>
+
+</div>
+
 {% endblock %}

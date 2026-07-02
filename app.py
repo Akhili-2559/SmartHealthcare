@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import sqlite3
 import pickle
 from utils.data_processing import preprocess_input
@@ -6,81 +6,143 @@ from utils.data_processing import preprocess_input
 app = Flask(__name__)
 
 # Load AI model
-model = pickle.load(open('models/diabetes_model.pkl', 'rb'))
+model = pickle.load(open("models/diabetes_model.pkl", "rb"))
 
-# Home page
+
+# ---------------- HOME ---------------- #
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
-# Add patient data
+
+# ---------------- ADD PATIENT ---------------- #
+
 @app.route('/add_patient', methods=['GET', 'POST'])
 def add_patient():
-    if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
-        glucose = request.form['glucose']
-        blood_pressure = request.form['blood_pressure']
 
-        # Save to SQLite
-        conn = sqlite3.connect('database/patients.db')
+    if request.method == 'POST':
+
+        name = request.form['name']
+        age = int(request.form['age'])
+        glucose = float(request.form['glucose'])
+        blood_pressure = float(request.form['blood_pressure'])
+
+        # Save into database
+        conn = sqlite3.connect("database/patients.db")
         cursor = conn.cursor()
-        cursor.execute('''
-            INSERT INTO patients (name, age, glucose, blood_pressure)
-            VALUES (?, ?, ?, ?)
-        ''', (name, age, glucose, blood_pressure))
+
+        cursor.execute("""
+            INSERT INTO patients(name, age, glucose, blood_pressure)
+            VALUES(?,?,?,?)
+        """, (name, age, glucose, blood_pressure))
+
         conn.commit()
         conn.close()
 
-        # AI prediction
+        # AI Prediction
         input_data = preprocess_input([age, glucose, blood_pressure])
+
         prediction = model.predict([input_data])[0]
 
-        return render_template('result.html', prediction=prediction)
-    return render_template('add_patient.html')
+        if prediction == 1:
+            prediction = "High Risk"
+        else:
+            prediction = "Low Risk"
 
-# View all patients
-@app.route('/patients')
-def patients():
-    conn = sqlite3.connect('database/patients.db')
+        return render_template(
+            "result.html",
+            prediction=prediction
+        )
+
+    return render_template("add_patient.html")
+
+
+# ---------------- VIEW PATIENTS ---------------- #
+
+@app.route('/view_patients')
+def view_patients():
+
+    conn = sqlite3.connect("database/patients.db")
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM patients')
-    data = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM patients")
+
+    patients = cursor.fetchall()
+
     conn.close()
-    return render_template('view_patients.html', patients=data)
-# Edit patient
+
+    return render_template(
+        "view_patients.html",
+        patients=patients
+    )
+
+
+# ---------------- EDIT PATIENT ---------------- #
+
 @app.route('/edit_patient/<int:id>', methods=['GET', 'POST'])
 def edit_patient(id):
-    conn = sqlite3.connect('database/patients.db')
+
+    conn = sqlite3.connect("database/patients.db")
     cursor = conn.cursor()
+
     if request.method == 'POST':
+
         name = request.form['name']
         age = request.form['age']
         glucose = request.form['glucose']
         blood_pressure = request.form['blood_pressure']
-        cursor.execute('''
+
+        cursor.execute("""
             UPDATE patients
-            SET name=?, age=?, glucose=?, blood_pressure=?
+            SET
+            name=?,
+            age=?,
+            glucose=?,
+            blood_pressure=?
             WHERE id=?
-        ''', (name, age, glucose, blood_pressure, id))
+        """, (name, age, glucose, blood_pressure, id))
+
         conn.commit()
         conn.close()
-        return render_template('result.html', prediction=None, message="Patient details updated successfully!")
-    cursor.execute('SELECT * FROM patients WHERE id=?', (id,))
-    patient = cursor.fetchone()
-    conn.close()
-    return render_template('edit_patient.html', patient=patient)
 
-# Delete patient
+        return redirect("/view_patients")
+
+    cursor.execute(
+        "SELECT * FROM patients WHERE id=?",
+        (id,)
+    )
+
+    patient = cursor.fetchone()
+
+    conn.close()
+
+    return render_template(
+        "edit_patient.html",
+        patient=patient
+    )
+
+
+# ---------------- DELETE PATIENT ---------------- #
+
 @app.route('/delete_patient/<int:id>')
 def delete_patient(id):
-    conn = sqlite3.connect('database/patients.db')
+
+    conn = sqlite3.connect("database/patients.db")
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM patients WHERE id=?', (id,))
+
+    cursor.execute(
+        "DELETE FROM patients WHERE id=?",
+        (id,)
+    )
+
     conn.commit()
     conn.close()
-    return render_template('result.html', prediction=None, message="Patient deleted successfully!")
+
+    return redirect("/view_patients")
 
 
-if __name__ == '__main__':
+# ---------------- RUN APP ---------------- #
+
+if __name__ == "__main__":
     app.run(debug=True)
